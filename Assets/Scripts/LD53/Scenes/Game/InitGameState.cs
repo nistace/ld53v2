@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using LD53.Inputs;
+using LD53.Scenes.Game.Data;
 using LD53.Scenes.Game.Ui;
 using Utils.GameStates;
 

@@ -30,6 +30,7 @@ namespace LD53.Data.Bikes {
 		public  BuildingInteractionArea.Event onStoppedInInteractionArea { get; } = new BuildingInteractionArea.Event();
 		public  Deliverer                     deliverer                  => _deliverer;
 		public  PedalMechanism                pedalMechanism             => _pedalMechanism;
+		public  bool                          crashed                    => _crashed;
 
 		private void Start() {
 			SetMovementEnabled(true);

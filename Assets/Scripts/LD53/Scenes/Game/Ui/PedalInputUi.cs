@@ -12,8 +12,8 @@ namespace LD53.Scenes.Game.Ui {
 		[SerializeField] protected KeyUi _rightPedalKey;
 
 		private void Start() {
-			_leftPedalKey.key = GameInput.controls.Bike.LeftPedal.controls.GetSafe(0)?.shortDisplayName.ToUpper() ?? string.Empty;
-			_rightPedalKey.key = GameInput.controls.Bike.RightPedal.controls.GetSafe(0)?.shortDisplayName.ToUpper() ?? string.Empty;
+			_leftPedalKey.key = GameInput.controls.Bike.LeftPedal.controls.GetSafe(0)?.displayName.ToUpper() ?? string.Empty;
+			_rightPedalKey.key = GameInput.controls.Bike.RightPedal.controls.GetSafe(0)?.displayName.ToUpper() ?? string.Empty;
 		}
 
 		private void Update() {

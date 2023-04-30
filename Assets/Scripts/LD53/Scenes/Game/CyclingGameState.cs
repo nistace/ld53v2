@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using LD53.Data.Orders;
+using LD53.Scenes.Game.Data;
 using LD53.Scenes.Game.Ui;
 using UnityEngine;
 using Utils.Extensions;
@@ -40,6 +41,6 @@ namespace LD53.Scenes.Game {
 			ChangeState(WatchCrashGameState.state);
 		}
 
-		private static void HandleStoppedInInteractionArea(BuildingInteractionArea interactionArea) => GameData.deliveryManager.HandleInteraction(interactionArea, GameData.inventory);
+		private static void HandleStoppedInInteractionArea(BuildingInteractionArea interactionArea) => GameData.deliveryManager.HandleInteraction(interactionArea);
 	}
 }

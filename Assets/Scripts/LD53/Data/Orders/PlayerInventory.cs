@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LD53.Data.Orders {
 	[Serializable]
-	public class Inventory {
+	public class PlayerInventory {
 		[SerializeField] protected int                 _capacity;
 		[SerializeField] protected List<DeliveryOrder> _orders = new List<DeliveryOrder>();
 

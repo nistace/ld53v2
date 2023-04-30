@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace LD53.Data.Orders {
 	[CreateAssetMenu]
 	public class DeliveryOrder : ScriptableObject {
 		[SerializeField] protected Meal[] _meals;
 		[SerializeField] protected float  _creationTime;
-		[SerializeField] protected float  _expectedPickUpTime;
-		[SerializeField] protected float  _expectedDeliveryTime;
+		[SerializeField] protected float  _maxScoreDeliveryTime;
 		[SerializeField] protected int    _baseScore;
 		[SerializeField] protected bool   _pickedUp;
 
@@ -19,14 +19,9 @@ namespace LD53.Data.Orders {
 			set => _creationTime = value;
 		}
 
-		public float expectedPickUpTime {
-			get => _expectedPickUpTime;
-			set => _expectedPickUpTime = value;
-		}
-
-		public float expectedDeliveryTime {
-			get => _expectedDeliveryTime;
-			set => _expectedDeliveryTime = value;
+		public float maxScoreDeliveryTime {
+			get => _maxScoreDeliveryTime;
+			set => _maxScoreDeliveryTime = value;
 		}
 
 		public int baseScore {
@@ -36,11 +31,18 @@ namespace LD53.Data.Orders {
 
 		public bool pickedUp {
 			get => _pickedUp;
-			set => _pickedUp = value;
+			private set => _pickedUp = value;
+		}
+
+		public void MarkAsPickedUp() {
+			pickedUp = true;
+			onPickedUp.Invoke();
 		}
 
 		public void KeepLessThanMeals(int count) {
 			if (_meals.Length > count) _meals = _meals.Take(count).ToArray();
 		}
+
+		public UnityEvent onPickedUp { get; } = new UnityEvent();
 	}
 }

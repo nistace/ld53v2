@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using LD53.Scenes.Game.Data;
 using Utils.GameStates;
 
 namespace LD53.Scenes.Game {

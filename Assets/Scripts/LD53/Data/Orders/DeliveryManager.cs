@@ -1,70 +1,78 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using Utils.Extensions;
+using Utils.Types;
 
 namespace LD53.Data.Orders {
 	public class DeliveryManager : MonoBehaviour {
+		public class OrderEvent : UnityEvent<DeliveryOrder, DeliveryPoint, PickUpPoint> { }
+
 		public static int maxOrderSize { get; set; }
 
+		[SerializeField] protected PlayerInventory _playerInventory;
 		[SerializeField] protected DeliveryPoint[] _deliveryPoints;
 		[SerializeField] protected PickUpPoint[]   _pickUpPoints;
+		[SerializeField] protected FloatRange      _delayBetweenNewOrders = (5, 10);
+		[SerializeField] protected int             _maxOrders             = 4;
+		[SerializeField] protected float           _nextNewOrderTime;
 
-		public static List<DeliveryOrder> activeOrders { get; } = new List<DeliveryOrder>();
+		private static Dictionary<DeliveryOrder, (PickUpPoint pickUp, DeliveryPoint delivery)> orderProps { get; } = new Dictionary<DeliveryOrder, (PickUpPoint, DeliveryPoint)>();
+
+		public static OrderEvent onOrderCreated  { get; } = new OrderEvent();
+		public static OrderEvent onOrderRemoved  { get; } = new OrderEvent();
+		public static OrderEvent onOrderPickedUp { get; } = new OrderEvent();
 
 		public void Setup() {
-			if (activeOrders.Count == 0) {
+			if (orderProps.Count == 0) {
 				CreateNewOrder();
 			}
 		}
 
-		private void TimeOut(int deliveryIndex) {
-			foreach (var pickUpPoint in _pickUpPoints.Where(t => t.currentOrder == activeOrders[deliveryIndex])) {
-				pickUpPoint.CancelOrder();
-			}
-			foreach (var deliveryPoint in _deliveryPoints.Where(t => t.expectedDelivery == activeOrders[deliveryIndex])) {
-				deliveryPoint.CancelOrder();
-			}
-			activeOrders.RemoveAt(deliveryIndex);
-			// TODO Handle Timeout
+		private static bool TryGetProps(DeliveryOrder order, out PickUpPoint pickUp, out DeliveryPoint delivery) {
+			pickUp = default;
+			delivery = default;
+			if (!orderProps.ContainsKey(order)) return false;
+			(pickUp, delivery) = orderProps[order];
+			return true;
 		}
 
-		public void PickUp(PickUpPoint from, Inventory to) {
-			from.currentOrder.pickedUp = true;
-			to.AddOrder(from.currentOrder);
-			from.OnPickedUp();
-			foreach (var deliveryPoint in _deliveryPoints.Where(t => t.expectedDelivery == from.currentOrder)) {
-				deliveryPoint.OnDeliveryPickedUp();
-			}
-			Debug.Log("Picked Up");
+		private void RemoveOrder(DeliveryOrder order) {
+			if (!TryGetProps(order, out var pickUp, out var delivery)) return;
+			pickUp.CancelOrder();
+			delivery.CancelOrder();
+			_playerInventory.RemoveOrder(order);
+			orderProps.Remove(order);
+			onOrderRemoved.Invoke(order, delivery, pickUp);
 		}
 
-		public void Deliver(Inventory from, DeliveryPoint to) {
-			from.RemoveOrder(to.expectedDelivery);
-			foreach (var pickUpPoint in _pickUpPoints.Where(t => t.currentOrder == to.expectedDelivery)) {
-				pickUpPoint.CancelOrder();
-			}
-			to.CancelOrder();
-			Debug.Log("Delivered");
+		private void PickUp(DeliveryOrder order) {
+			if (!TryGetProps(order, out var pickUp, out var delivery)) return;
+			order.MarkAsPickedUp();
+			_playerInventory.AddOrder(order);
+			onOrderPickedUp.Invoke(order, delivery, pickUp);
+		}
+
+		private void Deliver(DeliveryOrder order) {
+			RemoveOrder(order);
 			// TODO Handle delivery
 		}
 
 		private void Update() {
-			for (var index = 0; index < activeOrders.Count; index++) {
-				if (activeOrders[index].pickedUp) continue;
-				if (Time.time <= activeOrders[index].expectedDeliveryTime) continue;
-				TimeOut(index);
-				index--;
-			}
+			if (Time.time < _nextNewOrderTime) return;
+			if (orderProps.Count < _maxOrders) CreateNewOrder();
+			_nextNewOrderTime = _delayBetweenNewOrders.Random();
 		}
 
-		private bool CreateNewOrder() {
+		private void CreateNewOrder() {
 			var randomDeliveryPoint = _deliveryPoints.Where(t => !t.expectedDelivery).RandomOrDefault();
-			if (!randomDeliveryPoint) return false;
+			if (!randomDeliveryPoint) return;
 			var randomPickUpPoint = _pickUpPoints.Where(t => !t.currentOrder).RandomOrDefault();
-			if (!randomPickUpPoint) return false;
-			activeOrders.Add(randomPickUpPoint.GenerateOrder(maxOrderSize, randomDeliveryPoint));
-			return true;
+			if (!randomPickUpPoint) return;
+			var newOrder = randomPickUpPoint.GenerateOrder(maxOrderSize, randomDeliveryPoint);
+			orderProps.Add(newOrder, (randomPickUpPoint, randomDeliveryPoint));
+			onOrderCreated.Invoke(newOrder, randomDeliveryPoint, randomPickUpPoint);
 		}
 
 		[ContextMenu("Find all points")]
@@ -73,10 +81,10 @@ namespace LD53.Data.Orders {
 			_pickUpPoints = GetComponentsInChildren<PickUpPoint>();
 		}
 
-		public void HandleInteraction(BuildingInteractionArea interactionArea, Inventory inventory) {
+		public void HandleInteraction(BuildingInteractionArea interactionArea) {
 			if (!interactionArea.IsInteractable()) return;
-			if (interactionArea.gameObject.TryGetComponentInParent<PickUpPoint>(out var pickUpPoint)) PickUp(pickUpPoint, inventory);
-			else if (interactionArea.gameObject.TryGetComponentInParent<DeliveryPoint>(out var deliveryPoint)) Deliver(inventory, deliveryPoint);
+			if (interactionArea.gameObject.TryGetComponentInParent<PickUpPoint>(out var pickUpPoint)) PickUp(pickUpPoint.currentOrder);
+			else if (interactionArea.gameObject.TryGetComponentInParent<DeliveryPoint>(out var deliveryPoint)) Deliver(deliveryPoint.expectedDelivery);
 		}
 	}
 }

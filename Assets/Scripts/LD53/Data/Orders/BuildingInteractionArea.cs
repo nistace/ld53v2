@@ -7,7 +7,10 @@ namespace LD53.Data.Orders {
 
 		[SerializeField] protected bool         _interactable;
 		[SerializeField] protected MeshRenderer _areaRenderer;
-		[SerializeField] protected MeshRenderer _iconRenderer;
+		[SerializeField] protected GameObject   _disabledIcon;
+		[SerializeField] protected string       _notInteractableReason;
+
+		public string notInteractableReason => _notInteractableReason;
 
 		public void SetActive(bool active) {
 			enabled = active;
@@ -16,9 +19,11 @@ namespace LD53.Data.Orders {
 
 		public bool IsInteractable() => enabled && _interactable;
 
-		public void SetInteractable(bool interactable) {
+		public void SetInteractable(bool interactable, string reason = null) {
 			_interactable = interactable;
 			_areaRenderer.material.color = _interactable ? Color.green : Color.red;
+			_disabledIcon.SetActive(!interactable);
+			_notInteractableReason = reason;
 		}
 	}
 }

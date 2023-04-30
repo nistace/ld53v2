@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using LD53.Scenes.Game.Data;
+using UnityEngine;
 using Utils.GameStates;
 
 namespace LD53.Scenes.Game {
