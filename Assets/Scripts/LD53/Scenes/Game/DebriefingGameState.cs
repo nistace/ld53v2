@@ -37,8 +37,9 @@ namespace LD53.Scenes.Game {
 
 		private static void HandleRestart() => ChangeState(InitGameState.state);
 
-		private void HandleSubmitScore() {
-			// TODO SUBMIT
+		private static void HandleSubmitScore() {
+			if (string.IsNullOrEmpty(DebriefingUi.highScoreInputName)) return;
+			CoroutineRunner.Run(GameContext.SendHighScore(DebriefingUi.highScoreInputName));
 			ContinueToFinalPage();
 		}
 

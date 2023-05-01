@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using LD53.Data.Orders;
 using UnityEngine;
@@ -11,15 +12,13 @@ using Utils.Extensions;
 namespace LD53.Scenes.Game.Data {
 	public static class GameContext {
 #if UNITY_EDITOR
-		private const  int    gameTime = 1 * 60;
-		private static string apiUrlRoot => "localhost/nathanistace/gamejams/ludumdare53/api/";
+		private const int gameTime = 1 * 60;
 #else
 		private const int gameTime = 5 * 60;
-		private static string apiUrlRoot => "https://nathanistace.be/gamejams/ludumdare50/api/";
-#if UNITY_EDITOR
-#else
 #endif
-#endif
+
+		private static string apiUrlRoot => "https://nathanistace.be/gamejams/ludumdare53/api/";
+
 		public static  int   score        { get; private set; }
 		private static int   deliveries   { get; set; }
 		public static  int   crashes      { get; set; }
@@ -54,14 +53,14 @@ namespace LD53.Scenes.Game.Data {
 
 		public static IEnumerator CompileStats(UnityAction<GameStats> callback) {
 			GetScoreResult requestResult = null;
-			/*	using (var webRequest = new UnityWebRequest($"{apiUrlRoot}scores", "GET")) {
-					webRequest.downloadHandler = new DownloadHandlerBuffer();
-	
-					yield return webRequest.SendWebRequest();
-					if (webRequest.result == UnityWebRequest.Result.Success) {
-						requestResult = JsonUtility.FromJson<GetScoreResult>(webRequest.downloadHandler.text);
-					}
-				}*/
+			using (var webRequest = new UnityWebRequest($"{apiUrlRoot}scores", "GET")) {
+				webRequest.downloadHandler = new DownloadHandlerBuffer();
+
+				yield return webRequest.SendWebRequest();
+				if (webRequest.result == UnityWebRequest.Result.Success) {
+					requestResult = JsonUtility.FromJson<GetScoreResult>(webRequest.downloadHandler.text);
+				}
+			}
 
 			yield return null;
 			callback.Invoke(new GameStats {
@@ -69,25 +68,29 @@ namespace LD53.Scenes.Game.Data {
 				deliveries = deliveries,
 				crashes = crashes,
 				onlineDataGathered = requestResult != null,
-				onlineRanking = requestResult?.onlineRanking ?? -1,
-				entriesInDb = requestResult?.entriesInDb ?? -1
+				onlineRanking = requestResult == null ? -1 : 1 + requestResult.allScores.Count(t => t.score > score),
+				entriesInDb = requestResult == null ? -1 : 1 + requestResult.allScores.Length,
 			});
 		}
 
 		public static IEnumerator SendHighScore(string name) {
-			/*	using (var webRequest = new UnityWebRequest($"{apiUrlRoot}scores", "GET")) {
-					var data = new PostScoreData { name = name, score = score, deliveries = deliveries, crashes = crashes };
-					webRequest.SetRequestHeader("Content-Type", "application/json");
-					webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(data)));
-					webRequest.downloadHandler = new DownloadHandlerBuffer();
-					yield return webRequest.SendWebRequest();
-				}*/
+			using (var webRequest = new UnityWebRequest($"{apiUrlRoot}scores", "POST")) {
+				var data = new PostScoreData { name = name, score = score, deliveries = deliveries, crashes = crashes };
+				webRequest.SetRequestHeader("Content-Type", "application/json");
+				webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(data)));
+				webRequest.downloadHandler = new DownloadHandlerBuffer();
+				yield return webRequest.SendWebRequest();
+			}
 			yield return null;
 		}
 
 		[Serializable] public class GetScoreResult {
-			public int onlineRanking;
-			public int entriesInDb;
+			public Score[] allScores;
+
+			[Serializable] public class Score {
+				public string name;
+				public int    score;
+			}
 		}
 
 		[Serializable] public class PostScoreData {
