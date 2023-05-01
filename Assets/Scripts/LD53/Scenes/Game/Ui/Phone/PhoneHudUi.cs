@@ -20,6 +20,12 @@ public class PhoneHudUi : MonoBehaviour {
 	private void Start() {
 		GameContext.onDeliveredAndGainedScore.AddListenerOnce(HandleGainedScore);
 		DeliveryManager.onOrderCreated.AddListenerOnce(HandleNewOrderCreated);
+		GameContext.onNewGame.AddListenerOnce(ResetUi);
+		ResetUi();
+	}
+
+	private void ResetUi() {
+		gainedScoreNotificationStart = -100;
 		_scoreText.text = "0";
 	}
 
@@ -35,11 +41,12 @@ public class PhoneHudUi : MonoBehaviour {
 	}
 
 	private void HandleGainedScore(float gainedScore) {
-		_scoreText.text = $"{GameContext.score}";
+		_gainedScoreText.text = $"+{gainedScore}";
 		gainedScoreNotificationStart = Time.time;
 	}
 
 	private void Update() {
+		_scoreText.text = $"{GameContext.score}";
 		_timeText.text = $"{Mathf.FloorToInt(GameContext.remainingTime / 60f):00}:{GameContext.remainingTime % 60:00}";
 		_gainedScoreText.color = new Color(1, 1, 1, _gainedScoreOpacityCurve.Evaluate((gainedScoreNotificationStart - Time.time) / _gainedScoreNotificationTime));
 	}

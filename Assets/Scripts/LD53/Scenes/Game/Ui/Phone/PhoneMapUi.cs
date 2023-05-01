@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using LD53.Data.Orders;
 using LD53.Scenes.Game.Data;
 using UnityEngine;
@@ -20,9 +21,16 @@ namespace LD53.Scenes.Game.Ui {
 		private Map<PhoneInteractionAreaTokenUi, PickUpPoint>   activePickUpTokens     { get; } = new Map<PhoneInteractionAreaTokenUi, PickUpPoint>();
 
 		private void Start() {
+			GameContext.onNewGame.AddListenerOnce(ResetTokens);
 			DeliveryManager.onOrderRemoved.AddListenerOnce(HandleOrderRemoved);
 			DeliveryManager.onOrderCreated.AddListenerOnce(HandleOrderCreated);
 			DeliveryManager.onOrderPickedUp.AddListenerOnce(HandleUpdatePickedUp);
+			ResetTokens();
+		}
+
+		private void ResetTokens() {
+			while (activeDeliveryTokens.Any()) RemoveToken(activeDeliveryTokens, inactiveDeliveryTokens, activeDeliveryTokens.First().Value);
+			while (activePickUpTokens.Any()) RemoveToken(activePickUpTokens, inactivePickUpTokens, activePickUpTokens.First().Value);
 		}
 
 		private void HandleOrderCreated(DeliveryOrder order, DeliveryPoint delivery, PickUpPoint pickUp) {

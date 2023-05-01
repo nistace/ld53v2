@@ -12,6 +12,7 @@ namespace LD53.Scenes.Game {
 		private DebriefingGameState() { }
 
 		protected override void Enable() {
+			if (GameData.currentBike) GameData.currentBike.Stop();
 			DebriefingUi.Show(DebriefingUi.Page.Processing);
 			CoroutineRunner.Run(GameContext.CompileStats(OnStatsCompiled));
 		}

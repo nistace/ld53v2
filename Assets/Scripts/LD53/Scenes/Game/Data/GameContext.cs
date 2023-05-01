@@ -11,7 +11,7 @@ using Utils.Extensions;
 namespace LD53.Scenes.Game.Data {
 	public static class GameContext {
 #if UNITY_EDITOR
-		private const  int    gameTime = 1 * 40;
+		private const  int    gameTime = 1 * 60;
 		private static string apiUrlRoot => "localhost/nathanistace/gamejams/ludumdare53/api/";
 #else
 		private const int gameTime = 5 * 60;
@@ -28,6 +28,7 @@ namespace LD53.Scenes.Game.Data {
 
 		public static float remainingTime => timerRunning ? Mathf.Clamp(endTime - Time.time, 0, gameTime) : gameTime;
 
+		public static UnityEvent onNewGame                 { get; } = new UnityEvent();
 		public static FloatEvent onDeliveredAndGainedScore { get; } = new FloatEvent();
 
 		public static void SetupNewGame() {
@@ -36,6 +37,7 @@ namespace LD53.Scenes.Game.Data {
 			crashes = 0;
 			timerRunning = false;
 			DeliveryManager.onOrderDelivered.AddListenerOnce(HandleOrderDelivered);
+			onNewGame.Invoke();
 		}
 
 		private static void HandleOrderDelivered(DeliveryOrder order, DeliveryPoint delivery, PickUpPoint pickUp) {

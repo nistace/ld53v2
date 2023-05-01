@@ -23,6 +23,7 @@ namespace LD53.Data.Bikes {
 		[SerializeField]                      protected AnimationCurve  _turnSpeed            = AnimationCurve.Linear(0, 1, 1, .5f);
 		[Header("Collision"), SerializeField] protected float           _crashMinSqrMagnitude = 1000;
 		[SerializeField]                      protected bool            _crashed;
+		[SerializeField]                      protected float           _interactSpeedThreshold = .1f;
 
 		public Transform                     directionTransform         => _directionTransform;
 		public Vector3Event                  onCollisionHappened        { get; } = new Vector3Event();
@@ -113,10 +114,12 @@ namespace LD53.Data.Bikes {
 
 		private void OnTriggerStay(Collider other) {
 			if (_crashed) return;
-			if (!Mathf.Approximately(_speedLerp, 0)) return;
+			if (_speedLerp > _interactSpeedThreshold) return;
 			if (!other.gameObject.TryGetComponentInParent<BuildingInteractionArea>(out var interactionArea)) return;
 			if (!interactionArea.IsInteractable()) return;
 			onStoppedInInteractionArea.Invoke(interactionArea);
 		}
+
+		public void Stop() => _speedLerp = 0;
 	}
 }

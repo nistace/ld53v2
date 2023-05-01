@@ -726,7 +726,7 @@ MonoBehaviour:
   _speedLerp: 0
   _acceleration: 0.1
   _deceleration: -0.08
-  _brakingAcceleration: -0.4
+  _brakingAcceleration: -0.6
   _wheels:
   - {fileID: 4734231963693942728}
   - {fileID: 7604165928229173418}
@@ -792,6 +792,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _crashMinSqrMagnitude: 1000
   _crashed: 0
+  _interactSpeedThreshold: 0.4
 --- !u!54 &2087397180026608734
 Rigidbody:
   m_ObjectHideFlags: 0
