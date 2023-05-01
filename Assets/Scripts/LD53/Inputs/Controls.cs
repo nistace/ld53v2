@@ -64,6 +64,24 @@ namespace LD53.Inputs
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""GrabPhone"",
+                    ""type"": ""Value"",
+                    ""id"": ""06d1d0c2-74e1-473c-8e09-37ff9a5e2d52"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""DringDring"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a64012d-d283-4917-b1bf-ddd7b4234eeb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -132,6 +150,111 @@ namespace LD53.Inputs
                     ""action"": ""Brake"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9e0ea479-07d7-4a53-b721-01903b3f0820"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GrabPhone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f8eed2a3-ba3a-4e06-a496-2cfe89352010"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DringDring"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""System"",
+            ""id"": ""8e42b072-07a3-4421-8a28-f8671c08d281"",
+            ""actions"": [
+                {
+                    ""name"": ""Volume"",
+                    ""type"": ""Value"",
+                    ""id"": ""6cb9e643-c52b-43b8-8bda-a6ae64fd6358"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""572552af-b658-435a-b9e9-6ff853f27175"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Volume"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""4d6923a0-58f6-4e29-80f6-b136588bc3f1"",
+                    ""path"": ""<Keyboard>/numpadMinus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Volume"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""516b5599-a603-4c79-b483-16c424838caf"",
+                    ""path"": ""<Keyboard>/numpadPlus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Volume"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""16f7574f-d75b-4297-8139-d3cb940279fe"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Volume"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""06fb5e20-ddd7-4d28-9bee-2462af047ea2"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Volume"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""9158058d-f64e-4e42-80de-e096367d1866"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Volume"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -144,6 +267,11 @@ namespace LD53.Inputs
             m_Bike_RightPedal = m_Bike.FindAction("RightPedal", throwIfNotFound: true);
             m_Bike_Aim = m_Bike.FindAction("Aim", throwIfNotFound: true);
             m_Bike_Brake = m_Bike.FindAction("Brake", throwIfNotFound: true);
+            m_Bike_GrabPhone = m_Bike.FindAction("GrabPhone", throwIfNotFound: true);
+            m_Bike_DringDring = m_Bike.FindAction("DringDring", throwIfNotFound: true);
+            // System
+            m_System = asset.FindActionMap("System", throwIfNotFound: true);
+            m_System_Volume = m_System.FindAction("Volume", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -209,6 +337,8 @@ namespace LD53.Inputs
         private readonly InputAction m_Bike_RightPedal;
         private readonly InputAction m_Bike_Aim;
         private readonly InputAction m_Bike_Brake;
+        private readonly InputAction m_Bike_GrabPhone;
+        private readonly InputAction m_Bike_DringDring;
         public struct BikeActions
         {
             private @Controls m_Wrapper;
@@ -217,6 +347,8 @@ namespace LD53.Inputs
             public InputAction @RightPedal => m_Wrapper.m_Bike_RightPedal;
             public InputAction @Aim => m_Wrapper.m_Bike_Aim;
             public InputAction @Brake => m_Wrapper.m_Bike_Brake;
+            public InputAction @GrabPhone => m_Wrapper.m_Bike_GrabPhone;
+            public InputAction @DringDring => m_Wrapper.m_Bike_DringDring;
             public InputActionMap Get() { return m_Wrapper.m_Bike; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -238,6 +370,12 @@ namespace LD53.Inputs
                 @Brake.started += instance.OnBrake;
                 @Brake.performed += instance.OnBrake;
                 @Brake.canceled += instance.OnBrake;
+                @GrabPhone.started += instance.OnGrabPhone;
+                @GrabPhone.performed += instance.OnGrabPhone;
+                @GrabPhone.canceled += instance.OnGrabPhone;
+                @DringDring.started += instance.OnDringDring;
+                @DringDring.performed += instance.OnDringDring;
+                @DringDring.canceled += instance.OnDringDring;
             }
 
             private void UnregisterCallbacks(IBikeActions instance)
@@ -254,6 +392,12 @@ namespace LD53.Inputs
                 @Brake.started -= instance.OnBrake;
                 @Brake.performed -= instance.OnBrake;
                 @Brake.canceled -= instance.OnBrake;
+                @GrabPhone.started -= instance.OnGrabPhone;
+                @GrabPhone.performed -= instance.OnGrabPhone;
+                @GrabPhone.canceled -= instance.OnGrabPhone;
+                @DringDring.started -= instance.OnDringDring;
+                @DringDring.performed -= instance.OnDringDring;
+                @DringDring.canceled -= instance.OnDringDring;
             }
 
             public void RemoveCallbacks(IBikeActions instance)
@@ -271,12 +415,64 @@ namespace LD53.Inputs
             }
         }
         public BikeActions @Bike => new BikeActions(this);
+
+        // System
+        private readonly InputActionMap m_System;
+        private List<ISystemActions> m_SystemActionsCallbackInterfaces = new List<ISystemActions>();
+        private readonly InputAction m_System_Volume;
+        public struct SystemActions
+        {
+            private @Controls m_Wrapper;
+            public SystemActions(@Controls wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Volume => m_Wrapper.m_System_Volume;
+            public InputActionMap Get() { return m_Wrapper.m_System; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(SystemActions set) { return set.Get(); }
+            public void AddCallbacks(ISystemActions instance)
+            {
+                if (instance == null || m_Wrapper.m_SystemActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_SystemActionsCallbackInterfaces.Add(instance);
+                @Volume.started += instance.OnVolume;
+                @Volume.performed += instance.OnVolume;
+                @Volume.canceled += instance.OnVolume;
+            }
+
+            private void UnregisterCallbacks(ISystemActions instance)
+            {
+                @Volume.started -= instance.OnVolume;
+                @Volume.performed -= instance.OnVolume;
+                @Volume.canceled -= instance.OnVolume;
+            }
+
+            public void RemoveCallbacks(ISystemActions instance)
+            {
+                if (m_Wrapper.m_SystemActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            public void SetCallbacks(ISystemActions instance)
+            {
+                foreach (var item in m_Wrapper.m_SystemActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_SystemActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        public SystemActions @System => new SystemActions(this);
         public interface IBikeActions
         {
             void OnLeftPedal(InputAction.CallbackContext context);
             void OnRightPedal(InputAction.CallbackContext context);
             void OnAim(InputAction.CallbackContext context);
             void OnBrake(InputAction.CallbackContext context);
+            void OnGrabPhone(InputAction.CallbackContext context);
+            void OnDringDring(InputAction.CallbackContext context);
+        }
+        public interface ISystemActions
+        {
+            void OnVolume(InputAction.CallbackContext context);
         }
     }
 }

@@ -66,7 +66,6 @@ namespace LD53.Scenes.Game.Ui {
 			_playerIcon.enabled = GameData.currentBike && !GameData.currentBike.crashed;
 			if (!GameData.currentBike || GameData.currentBike.crashed) return;
 			var playerOffset = GameData.gameEnvironment.GetPositionRelativeToBounds(GameData.currentBike.transform.position);
-			Debug.Log(playerOffset);
 			_mapImage.pivot = playerOffset;
 			_mapImage.anchoredPosition = Vector2.zero;
 			_playerIcon.transform.rotation = Quaternion.Euler(0, 0, -GameData.currentBike.transform.rotation.eulerAngles.y);

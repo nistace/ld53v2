@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64599dd65e6f42c5ac66c496c203301d, type: 3}
+  m_Name: Audio
+  m_EditorClassIdentifier: 
+  _id:
+    _value: 1
+  _defaultItem: {fileID: 0}
+  _orderIndex: 0
+  _itemNames:
+  - music
+  - musicstop
+  - notification
+  - success
+  - dringdring
+  - orderReady
+  _items:
+  - {fileID: 8300000, guid: c2bbeacd701f78648a5c39621a41775d, type: 3}
+  - {fileID: 8300000, guid: 0a7676044090b9d46acb692f0cf61c39, type: 3}
+  - {fileID: 8300000, guid: 2351076a477a3ec4fa6800621086983f, type: 3}
+  - {fileID: 8300000, guid: c25f60f01b4756e4fa5443c9ec6adcfc, type: 3}
+  - {fileID: 8300000, guid: 7574a4f51e84114488dc0b302e5577a7, type: 3}
+  - {fileID: 8300000, guid: bcbd38f59104ae041b9bb52ccc06d0fb, type: 3}

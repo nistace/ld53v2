@@ -12,6 +12,7 @@ public class DeliveryPoint : MonoBehaviour, IInteractablePoint {
 
 	public DeliveryOrder expectedDelivery => _expectedDelivery;
 	public Vector3       worldPosition    => transform.position;
+	public bool          canOrder         => expectedDelivery == null;
 
 	private void Start() => RefreshInteractionArea();
 
@@ -25,19 +26,19 @@ public class DeliveryPoint : MonoBehaviour, IInteractablePoint {
 	private void HandleDeliveryPickedUp() => RefreshInteractionArea();
 
 	public void CancelOrder() {
-		if (!_expectedDelivery) return;
+		if (_expectedDelivery == null) return;
 		_expectedDelivery.onPickedUp.RemoveListener(HandleDeliveryPickedUp);
 		_expectedDelivery = null;
 		RefreshInteractionArea();
 	}
 
 	private void RefreshInteractionArea() {
-		_interactionArea.SetActive(_expectedDelivery);
+		_interactionArea.SetActive(_expectedDelivery != null);
 		_interactionArea.SetInteractable(CheckInteractable(out var reason), reason);
 	}
 
 	private bool CheckInteractable(out string reason) {
-		if (!_expectedDelivery) return "This place is not expecting any delivery.".False(out reason);
+		if (_expectedDelivery == null) return "This place is not expecting any delivery.".False(out reason);
 		if (!_expectedDelivery.pickedUp) return "You need to pick up the order before you can deliver it.".False(out reason);
 		return string.Empty.True(out reason);
 	}

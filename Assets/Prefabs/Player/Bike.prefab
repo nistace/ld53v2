@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minRotatingThing: 0
-  _maxRotatingThing: 180
+  _maxRotatingThing: 360
   _lerpRotatingSpeed: 0.5
   _rotatingAxis: {x: 1, y: 0, z: 0}
 --- !u!136 &8262238683889687938
@@ -722,11 +722,11 @@ MonoBehaviour:
   _deliverer: {fileID: 5099903279503845471}
   _rigidbody: {fileID: 2087397180026608734}
   _minSpeed: 0
-  _maxSpeed: 8
+  _maxSpeed: 15
   _speedLerp: 0
   _acceleration: 0.1
   _deceleration: -0.08
-  _brakingAcceleration: -0.6
+  _brakingAcceleration: -0.4
   _wheels:
   - {fileID: 4734231963693942728}
   - {fileID: 7604165928229173418}
@@ -909,7 +909,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minRotatingThing: 0
-  _maxRotatingThing: 360
+  _maxRotatingThing: 480
   _lerpRotatingSpeed: 0.5
   _rotatingAxis: {x: 1, y: 0, z: 0}
 --- !u!64 &8736228956459511915
@@ -1317,7 +1317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minRotatingThing: 0
-  _maxRotatingThing: 180
+  _maxRotatingThing: 360
   _lerpRotatingSpeed: 0
   _rotatingAxis: {x: 1, y: 0, z: 0}
 --- !u!136 &6864033266573037878

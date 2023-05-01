@@ -9,25 +9,27 @@ namespace LD53.Data.Orders {
 	public class DeliveryManager : MonoBehaviour {
 		public class OrderEvent : UnityEvent<DeliveryOrder, DeliveryPoint, PickUpPoint> { }
 
-		public static int maxOrderSize { get; set; }
-
-		[SerializeField] protected PlayerInventory _playerInventory;
 		[SerializeField] protected DeliveryPoint[] _deliveryPoints;
 		[SerializeField] protected PickUpPoint[]   _pickUpPoints;
 		[SerializeField] protected FloatRange      _delayBetweenNewOrders = (5, 10);
 		[SerializeField] protected int             _maxOrders             = 4;
-		[SerializeField] protected float           _nextNewOrderTime;
+		[SerializeField] protected float           _newOrderCooldown;
 
 		private static Dictionary<DeliveryOrder, (PickUpPoint pickUp, DeliveryPoint delivery)> orderProps { get; } = new Dictionary<DeliveryOrder, (PickUpPoint, DeliveryPoint)>();
 
-		public static OrderEvent onOrderCreated  { get; } = new OrderEvent();
-		public static OrderEvent onOrderRemoved  { get; } = new OrderEvent();
-		public static OrderEvent onOrderPickedUp { get; } = new OrderEvent();
+		private static PlayerInventory playerInventory { get; set; }
+
+		public static OrderEvent onOrderCreated   { get; } = new OrderEvent();
+		public static OrderEvent onOrderDelivered { get; } = new OrderEvent();
+		public static OrderEvent onOrderRemoved   { get; } = new OrderEvent();
+		public static OrderEvent onOrderPickedUp  { get; } = new OrderEvent();
+		public static bool       creationEnabled  { get; set; }
 
 		public void Setup() {
-			if (orderProps.Count == 0) {
-				CreateNewOrder();
-			}
+			orderProps.Clear();
+			foreach (var deliveryPoint in _deliveryPoints) deliveryPoint.CancelOrder();
+			foreach (var pickUpPoint in _pickUpPoints) pickUpPoint.CancelOrder();
+			playerInventory = new PlayerInventory();
 		}
 
 		private static bool TryGetProps(DeliveryOrder order, out PickUpPoint pickUp, out DeliveryPoint delivery) {
@@ -38,39 +40,44 @@ namespace LD53.Data.Orders {
 			return true;
 		}
 
-		private void RemoveOrder(DeliveryOrder order) {
+		private static void RemoveOrder(DeliveryOrder order) {
 			if (!TryGetProps(order, out var pickUp, out var delivery)) return;
 			pickUp.CancelOrder();
 			delivery.CancelOrder();
-			_playerInventory.RemoveOrder(order);
+			playerInventory.RemoveOrder(order);
 			orderProps.Remove(order);
 			onOrderRemoved.Invoke(order, delivery, pickUp);
 		}
 
-		private void PickUp(DeliveryOrder order) {
+		private static void PickUp(DeliveryOrder order) {
 			if (!TryGetProps(order, out var pickUp, out var delivery)) return;
 			order.MarkAsPickedUp();
-			_playerInventory.AddOrder(order);
+			playerInventory.AddOrder(order);
 			onOrderPickedUp.Invoke(order, delivery, pickUp);
 		}
 
-		private void Deliver(DeliveryOrder order) {
+		private static void Deliver(DeliveryOrder order) {
+			if (!TryGetProps(order, out var pickUp, out var delivery)) return;
 			RemoveOrder(order);
-			// TODO Handle delivery
+			onOrderDelivered.Invoke(order, delivery, pickUp);
 		}
 
 		private void Update() {
-			if (Time.time < _nextNewOrderTime) return;
+			if (!creationEnabled) return;
+			if (orderProps.Count != 0) {
+				_newOrderCooldown -= Time.deltaTime;
+				if (_newOrderCooldown > 0) return;
+			}
 			if (orderProps.Count < _maxOrders) CreateNewOrder();
-			_nextNewOrderTime = _delayBetweenNewOrders.Random();
+			_newOrderCooldown = _delayBetweenNewOrders.Random();
 		}
 
 		private void CreateNewOrder() {
-			var randomDeliveryPoint = _deliveryPoints.Where(t => !t.expectedDelivery).RandomOrDefault();
+			var randomDeliveryPoint = _deliveryPoints.Where(t => t.canOrder).RandomOrDefault();
 			if (!randomDeliveryPoint) return;
-			var randomPickUpPoint = _pickUpPoints.Where(t => !t.currentOrder).RandomOrDefault();
+			var randomPickUpPoint = _pickUpPoints.Where(t => t.canGenerateOrder).RandomOrDefault();
 			if (!randomPickUpPoint) return;
-			var newOrder = randomPickUpPoint.GenerateOrder(maxOrderSize, randomDeliveryPoint);
+			var newOrder = randomPickUpPoint.GenerateOrder(randomDeliveryPoint);
 			orderProps.Add(newOrder, (randomPickUpPoint, randomDeliveryPoint));
 			onOrderCreated.Invoke(newOrder, randomDeliveryPoint, randomPickUpPoint);
 		}

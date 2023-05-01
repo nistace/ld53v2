@@ -5,21 +5,18 @@ using Utils.StaticUtils;
 namespace LD53.Data.Orders {
 	public class PickUpPoint : MonoBehaviour, IInteractablePoint {
 		[SerializeField] protected BuildingInteractionArea _interactionArea;
-		[SerializeField] protected DeliveryOrder[]         _orderPrefabs;
 
 		public DeliveryOrder currentOrder     { get; private set; }
-		public bool          canGenerateOrder => !currentOrder;
+		public bool          canGenerateOrder => currentOrder == null;
 		public Vector3       worldPosition    => transform.position;
 
 		private void Start() {
 			_interactionArea.SetActive(false);
 		}
 
-		public DeliveryOrder GenerateOrder(int mealCountMax, DeliveryPoint deliveryPoint) {
+		public DeliveryOrder GenerateOrder(DeliveryPoint deliveryPoint) {
 			CancelOrder();
-			currentOrder = Instantiate(_orderPrefabs.Random());
-			currentOrder.KeepLessThanMeals(mealCountMax);
-			currentOrder.creationTime = Time.time;
+			currentOrder = new DeliveryOrder(Vector3.Magnitude(deliveryPoint.worldPosition - worldPosition));
 			currentOrder.onPickedUp.AddListenerOnce(HandleCurrentOrderPickedUp);
 			deliveryPoint.SetExpectedDelivery(currentOrder);
 			RefreshInteractionArea();
@@ -29,7 +26,7 @@ namespace LD53.Data.Orders {
 		private void HandleCurrentOrderPickedUp() => RefreshInteractionArea();
 
 		public void CancelOrder() {
-			if (!currentOrder) return;
+			if (currentOrder == null) return;
 			currentOrder.onPickedUp.RemoveListener(HandleCurrentOrderPickedUp);
 			currentOrder = null;
 			RefreshInteractionArea();
@@ -42,7 +39,7 @@ namespace LD53.Data.Orders {
 		}
 
 		private bool CheckInteractable(out string reason) {
-			if (!currentOrder) return "This place is not delivering anything now.".False(out reason);
+			if (currentOrder == null) return "This place is not delivering anything now.".False(out reason);
 			if (currentOrder.pickedUp) return "This order has already been picked up.".False(out reason);
 			return string.Empty.True(out reason);
 		}

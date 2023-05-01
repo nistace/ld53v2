@@ -2,7 +2,11 @@
 using LD53.Data.Bikes;
 using LD53.Scenes.Game.Data;
 using UnityEngine;
+using Utils.Audio;
+using Utils.Coroutines;
 using Utils.GameStates;
+using Utils.Loading;
+using GameState = Utils.GameStates.GameState;
 
 namespace LD53.Scenes.Game {
 	public class WatchCrashGameState : GameState {
@@ -16,6 +20,7 @@ namespace LD53.Scenes.Game {
 		}
 
 		protected override void Enable() {
+			GameContext.crashes++;
 			GameData.currentBike.Crash(collisionForce);
 			GameData.camera.target = GameData.currentBike.deliverer.headPosition;
 			GameData.camera.strategy = FollowCam.Strategy.WatchTarget;
@@ -24,7 +29,10 @@ namespace LD53.Scenes.Game {
 		protected override void Disable() { }
 
 		protected override IEnumerator Continue() {
-			yield return new WaitForSeconds(10f);
+			AudioManager.Music.loop = false;
+			AudioManager.Music.ChangeClip("musicStop", true);
+			yield return new WaitForSeconds(6f);
+			yield return CoroutineRunner.Run(LoadingCanvas.instance.DoFadeIn());
 			ChangeState(RespawnGameState.state);
 		}
 

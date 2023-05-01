@@ -1,6 +1,6 @@
 ﻿using LD53.Scenes.Game.Data;
 using UnityEngine;
-using Utils.GameStates;
+using GameState = Utils.GameStates.GameState;
 
 namespace LD53.Scenes.Game {
 	public class GameSceneController : MonoBehaviour {

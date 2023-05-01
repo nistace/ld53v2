@@ -24,26 +24,20 @@ namespace LD53.Data.Bikes {
 		[Header("Collision"), SerializeField] protected float           _crashMinSqrMagnitude = 1000;
 		[SerializeField]                      protected bool            _crashed;
 
-		public  Transform                     directionTransform         => _directionTransform;
-		private BuildingInteractionArea       inInteractionArea          { get; set; }
-		public  Vector3Event                  onCollisionHappened        { get; } = new Vector3Event();
-		public  BuildingInteractionArea.Event onStoppedInInteractionArea { get; } = new BuildingInteractionArea.Event();
-		public  Deliverer                     deliverer                  => _deliverer;
-		public  PedalMechanism                pedalMechanism             => _pedalMechanism;
-		public  bool                          crashed                    => _crashed;
+		public Transform                     directionTransform         => _directionTransform;
+		public Vector3Event                  onCollisionHappened        { get; } = new Vector3Event();
+		public BuildingInteractionArea.Event onStoppedInInteractionArea { get; } = new BuildingInteractionArea.Event();
+		public Deliverer                     deliverer                  => _deliverer;
+		public PedalMechanism                pedalMechanism             => _pedalMechanism;
+		public bool                          crashed                    => _crashed;
 
-		private void Start() {
-			SetMovementEnabled(true);
-			SetLookAroundEnabled(true);
-		}
-
-		public void SetMovementEnabled(bool enabled) {
+		public static void SetMovementEnabled(bool enabled) {
 			GameInput.controls.Bike.LeftPedal.SetEnabled(enabled);
 			GameInput.controls.Bike.RightPedal.SetEnabled(enabled);
 			GameInput.controls.Bike.Brake.SetEnabled(enabled);
 		}
 
-		public void SetLookAroundEnabled(bool enabled) {
+		public static void SetLookAroundEnabled(bool enabled) {
 			GameInput.controls.Bike.Aim.SetEnabled(enabled);
 			Cursor.visible = !enabled;
 			Cursor.lockState = enabled ? CursorLockMode.Locked : CursorLockMode.Confined;
@@ -65,13 +59,7 @@ namespace LD53.Data.Bikes {
 			UpdateInteractionArea();
 		}
 
-		private void UpdateInteractionArea() {
-			if (_crashed) return;
-			if (!Mathf.Approximately(_speedLerp, 0)) return;
-			if (!inInteractionArea) return;
-			if (!inInteractionArea.IsInteractable()) return;
-			onStoppedInInteractionArea.Invoke(inInteractionArea);
-		}
+		private void UpdateInteractionArea() { }
 
 		private void UpdateDirection() {
 			var aimChange = GameInput.controls.Bike.Aim.ReadValue<float>();
@@ -117,20 +105,18 @@ namespace LD53.Data.Bikes {
 			if (_deliverer) Destroy(_deliverer.gameObject);
 		}
 
-		private void OnTriggerEnter(Collider other) {
-			if (!other.gameObject.TryGetComponentInParent<BuildingInteractionArea>(out var interactionArea)) return;
-			inInteractionArea = interactionArea;
-		}
-
-		private void OnTriggerExit(Collider other) {
-			if (!other.gameObject.TryGetComponentInParent<BuildingInteractionArea>(out var interactionArea) && inInteractionArea == interactionArea) return;
-			inInteractionArea = null;
-		}
-
 		private void OnCollisionEnter(Collision collision) {
 			if (collision.impulse.sqrMagnitude > _crashMinSqrMagnitude) {
 				onCollisionHappened.Invoke(collision.impulse);
 			}
+		}
+
+		private void OnTriggerStay(Collider other) {
+			if (_crashed) return;
+			if (!Mathf.Approximately(_speedLerp, 0)) return;
+			if (!other.gameObject.TryGetComponentInParent<BuildingInteractionArea>(out var interactionArea)) return;
+			if (!interactionArea.IsInteractable()) return;
+			onStoppedInInteractionArea.Invoke(interactionArea);
 		}
 	}
 }

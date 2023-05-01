@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e06172fdbd04e36be59a43147b5375e, type: 3}
+  m_Name: New Library Build Data
+  m_EditorClassIdentifier: 
+  _colorLibraries: []
+  _cursorLibraries: []
+  _audioClipLibraries:
+  - {fileID: 11400000, guid: c08c5e85e90c91145bce94e9e952c8bb, type: 2}
+  _particlesLibraries: []
+  _spriteLibraries: []
