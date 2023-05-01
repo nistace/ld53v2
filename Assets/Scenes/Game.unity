@@ -11634,7 +11634,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _smallTransform: {fileID: 2108559060}
+  _smallMapStrategy: 0
   _fullScreenTransform: {fileID: 2046044473}
+  _fullScreenMapStrategy: 1
   _phoneUi: {fileID: 1488199731}
 --- !u!1001 &484068500
 PrefabInstance:
@@ -11876,18 +11878,9 @@ MonoBehaviour:
   _processingPage: {fileID: 799612786}
   _offlinePage: {fileID: 506519688}
   _offlinePageText: {fileID: 1832303710}
-  _offlineTextTemplate: 'Regrettably, we were unable to assess your performance in
-    relation to your fellow employees. However, we are still able to provide you
-    with your personal statistics.   Your score: [SCORE]   Deliveries: [DELIVERIES]  
-    Crashes: [CRASHES]'
   _continueAfterOfflinePageButton: {fileID: 38958282}
   _highScorePage: {fileID: 1871136054}
   _highScoreText: {fileID: 1036902558}
-  _highScoreTextTemplate: 'We have evaluated your performance in comparison to that
-    of our other employees.   Your score: [SCORE]   Deliveries: [DELIVERIES]   Crashes:
-    [CRASHES]    You have earned the esteemed rank of number [RANKING] best employee
-    out of a total of [EMPLOYEES]. Would you like to take note of this impressive
-    accomplishment?'
   _highScoreNameInput: {fileID: 1934168632}
   _saveScoreAndContinueButton: {fileID: 295560854}
   _skipScoreButton: {fileID: 1589583146}
@@ -12001,7 +11994,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1792845374}
-  - {fileID: 2005347093}
   m_Father: {fileID: 856259826}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12022,7 +12014,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e0cbcbee9ef48fa8342501ff2934ebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _strategy: 0
   _mapImage: {fileID: 1792845374}
+  _mapAspectRatioFitter: {fileID: 1792845378}
+  _defaultMapSize: {x: 600, y: 600}
   _playerIcon: {fileID: 2005347094}
   _deliveryTokenPrefab: {fileID: 6975872658568491077, guid: 5309f74ca85591c46880eba3965a25c3, type: 3}
   _pickUpTokenPrefab: {fileID: 6255836933339883938, guid: 7608e53e1a2c6f749befb0dbfb457e4e, type: 3}
@@ -35211,6 +35206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5e4f79b97eb4d869934c5bbb4733235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _map: {fileID: 491690347}
   _rectTransform: {fileID: 1488199730}
   _transitionSpeed: 4000
 --- !u!1001 &1500734932
@@ -40849,13 +40845,13 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Well done! Thank you for playing!
 
-    
 
-    Of course, an exemplary
-    employee would always strive to improve and showcase their potential for even
-    greater success...
 
-    
+    Of course, an exemplary employee
+    would always strive to improve and showcase their potential for even greater
+    success...
+
+
 
     But of course it''s up to you!'
   m_isRightToLeft: 0
@@ -42029,6 +42025,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1597615122}
+  - {fileID: 2005347093}
   m_Father: {fileID: 491690346}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47266,12 +47263,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2005347092}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 491690346}
+  m_Father: {fileID: 1792845374}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}

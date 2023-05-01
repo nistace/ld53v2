@@ -9,7 +9,15 @@ using Utils.Types;
 
 namespace LD53.Scenes.Game.Ui {
 	public class PhoneMapUi : MonoBehaviour {
+		public enum Strategy {
+			FixedPlayerPosition,
+			FixedMapPosition
+		}
+
+		[SerializeField] protected Strategy                    _strategy;
 		[SerializeField] protected RectTransform               _mapImage;
+		[SerializeField] protected AspectRatioFitter           _mapAspectRatioFitter;
+		[SerializeField] protected Vector2                     _defaultMapSize = new Vector2(800, 800);
 		[SerializeField] protected Image                       _playerIcon;
 		[SerializeField] protected PhoneInteractionAreaTokenUi _deliveryTokenPrefab;
 		[SerializeField] protected PhoneInteractionAreaTokenUi _pickUpTokenPrefab;
@@ -73,11 +81,32 @@ namespace LD53.Scenes.Game.Ui {
 		private void Update() {
 			_playerIcon.enabled = GameData.currentBike && !GameData.currentBike.crashed;
 			if (!GameData.currentBike || GameData.currentBike.crashed) return;
-			var playerOffset = GameData.gameEnvironment.GetPositionRelativeToBounds(GameData.currentBike.transform.position);
-			_mapImage.pivot = playerOffset;
-			_mapImage.anchoredPosition = Vector2.zero;
+			var playerMapPosition = GameData.gameEnvironment.GetPositionRelativeToBounds(GameData.currentBike.transform.position);
+			SetPlayerTokenMapPosition(playerMapPosition);
+			if (_strategy == Strategy.FixedPlayerPosition) {
+				_mapImage.pivot = GameData.gameEnvironment.GetPositionRelativeToBounds(GameData.currentBike.transform.position);
+				_mapImage.anchoredPosition = Vector2.zero;
+			}
 			_playerIcon.transform.rotation = Quaternion.Euler(0, 0, -GameData.currentBike.transform.rotation.eulerAngles.y);
-			// TODO Position the tokens on the map
+		}
+
+		private void SetPlayerTokenMapPosition(Vector2 mapPosition) {
+			_playerIcon.rectTransform.anchorMin = mapPosition;
+			_playerIcon.rectTransform.anchorMax = mapPosition;
+			_playerIcon.rectTransform.anchoredPosition = Vector2.zero;
+		}
+
+		public void ChangeStrategy(Strategy newStrategy) {
+			_strategy = newStrategy;
+
+			_mapImage.pivot = Vector2.one * .5f;
+			_mapAspectRatioFitter.enabled = newStrategy == Strategy.FixedMapPosition;
+			if (_strategy == Strategy.FixedPlayerPosition) {
+				_mapImage.anchorMin = new Vector2(.5f, .5f);
+				_mapImage.anchorMax = _mapImage.anchorMin;
+				_mapImage.offsetMin = -_defaultMapSize * .5f;
+				_mapImage.offsetMax = _defaultMapSize * .5f;
+			}
 		}
 	}
 }

@@ -5,9 +5,11 @@ namespace LD53.Scenes.Game.Ui {
 	public class PhoneSystemUi : MonoBehaviour {
 		private static PhoneSystemUi instance { get; set; }
 
-		[SerializeField] protected RectTransform _smallTransform;
-		[SerializeField] protected RectTransform _fullScreenTransform;
-		[SerializeField] protected PhoneUi       _phoneUi;
+		[SerializeField] protected RectTransform       _smallTransform;
+		[SerializeField] protected PhoneMapUi.Strategy _smallMapStrategy;
+		[SerializeField] protected RectTransform       _fullScreenTransform;
+		[SerializeField] protected PhoneMapUi.Strategy _fullScreenMapStrategy;
+		[SerializeField] protected PhoneUi             _phoneUi;
 
 		public enum Position {
 			Pocket,
@@ -18,9 +20,19 @@ namespace LD53.Scenes.Game.Ui {
 			instance = this;
 		}
 
+		public void Start() => ShowPhone(Position.Pocket);
+
 		public static void ShowPhone(Position position) {
 			if (!instance) return;
-			instance._phoneUi.MoveTo(instance.GetPositionRect(position));
+			instance._phoneUi.MoveTo(instance.GetPositionRect(position), instance.GetMapStrategy(position));
+		}
+
+		private PhoneMapUi.Strategy GetMapStrategy(Position position) {
+			switch (position) {
+				case Position.Pocket:     return _smallMapStrategy;
+				case Position.FullScreen: return _fullScreenMapStrategy;
+				default:                  throw new ArgumentOutOfRangeException(nameof(position), position, null);
+			}
 		}
 
 		private RectTransform GetPositionRect(Position position) {
